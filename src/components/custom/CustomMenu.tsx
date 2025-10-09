@@ -13,15 +13,13 @@ export const CustomMenu = () => {
   return pathname === path;
  };
 
- console.log(pathname);
-
  return (
   <NavigationMenu>
    <NavigationMenuList>
     <NavigationMenuItem>
      <NavigationMenuLink
       asChild
-      className={cn(isActive("/") && "bg-blue-500", "rounded-md p-2")}
+      className={cn(isActive("/") && "bg-slate-300", "rounded-md p-2")}
      >
       <Link to="/">Home</Link>
      </NavigationMenuLink>
@@ -30,7 +28,7 @@ export const CustomMenu = () => {
     <NavigationMenuItem>
      <NavigationMenuLink
       asChild
-      className={cn(isActive("/search") && "bg-blue-500", "rounded-md p-2")}
+      className={cn(isActive("/search") && "bg-slate-300", "rounded-md p-2")}
      >
       <Link to="/search">Search</Link>
      </NavigationMenuLink>

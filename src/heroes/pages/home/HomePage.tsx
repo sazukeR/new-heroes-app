@@ -27,6 +27,8 @@ export const HomePage = () => {
  //  });
  // }, []);
 
+ console.log(data);
+
  return (
   <>
    <>
