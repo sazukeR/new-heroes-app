@@ -4,26 +4,23 @@ import { HeroStats } from "@/heroes/components/HeroStats";
 import { HeroGrid } from "@/heroes/components/HeroGrid";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { CustomBreadcrumbs } from "@/components/custom/CustomBreadcrumbs";
-import { getHeroesByPageAction } from "@/heroes/actions/get-heroes-by-page";
-import { useQuery } from "@tanstack/react-query";
+
 import { useSearchParams } from "react-router";
 import { useMemo } from "react";
+
+import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
+import { usePaginatedHero } from "@/heroes/hooks/usePaginatedHero";
 
 export const HomePage = () => {
  const [searchParams, setSearchParams] = useSearchParams();
 
  const activeTab = searchParams.get("tab") ?? "all";
+ const page = searchParams.get("page") ?? "1";
+ const limit = searchParams.get("limit") ?? "6";
 
- // no long state
  // const [activeTab, setActiveTab] = useState<
  //  "all" | "favorites" | "heroes" | "villains"
  // >("all");
-
- const { data: heroesResponse } = useQuery({
-  queryKey: ["heroes"],
-  queryFn: () => getHeroesByPageAction(),
-  staleTime: 1000 * 60 * 5,
- });
 
  // useEffect(() => {
  //  getHeroesByPageAction().then((heroes) => {
@@ -46,6 +43,10 @@ export const HomePage = () => {
   return validTabs.includes(activeTab) ? activeTab : "all";
  }, [activeTab]);
 
+ const { data: heroesResponse } = usePaginatedHero(+page, +limit);
+
+ const { data: summary } = useHeroSummary();
+
  return (
   <>
    <>
@@ -64,7 +65,7 @@ export const HomePage = () => {
     <Tabs value={selectedTab} className="mb-8">
      <TabsList className="grid w-full grid-cols-4">
       <TabsTrigger onClick={() => handleTab("all")} value="all">
-       All Characters (16)
+       All Characters ({summary?.totalHeroes})
       </TabsTrigger>
       <TabsTrigger
        onClick={() => handleTab("favorites")}
@@ -74,10 +75,10 @@ export const HomePage = () => {
        Favorites (3)
       </TabsTrigger>
       <TabsTrigger onClick={() => handleTab("heroes")} value="heroes">
-       Heroes (12)
+       Heroes ({summary?.heroCount})
       </TabsTrigger>
       <TabsTrigger onClick={() => handleTab("villains")} value="villains">
-       Villains (2)
+       Villains ({summary?.villainCount})
       </TabsTrigger>
      </TabsList>
 
@@ -104,7 +105,7 @@ export const HomePage = () => {
     </Tabs>
 
     {/* Pagination */}
-    <CustomPagination totalPages={8} />
+    <CustomPagination totalPages={heroesResponse?.pages ?? 1} />
    </>
   </>
  );
