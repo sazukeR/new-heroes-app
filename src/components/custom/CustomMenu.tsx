@@ -14,7 +14,7 @@ export const CustomMenu = () => {
  };
 
  return (
-  <NavigationMenu>
+  <NavigationMenu className="my-5">
    <NavigationMenuList>
     <NavigationMenuItem>
      <NavigationMenuLink
