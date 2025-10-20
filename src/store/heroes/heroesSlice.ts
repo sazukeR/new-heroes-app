@@ -1,8 +1,14 @@
+import type { Hero } from "@/heroes/interfaces/hero-response.interface";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+// interface SimpleHero {
+//  id: string;
+//  slug: string;
+// }
+
 interface FavoriteHero {
- [key: string]: { id: string; slug: string };
+ [key: string]: Hero;
 }
 
 export interface FavoriteHeroesState {
@@ -12,19 +18,19 @@ export interface FavoriteHeroesState {
 
 const initialState: FavoriteHeroesState = {
  favorites: {},
- favoriteCount: 0,
+ favoriteCount: 1,
 };
 
 export const counterSlice = createSlice({
- name: "counter",
+ name: "favorites",
  initialState,
  reducers: {
   // incrementByAmount: (state, action: PayloadAction<number>) => {
   //   state.value += action.payload
   // },
 
-  toggleFavorite: (state, action: PayloadAction<FavoriteHero>) => {
-   const hero = action.payload.favorites;
+  toggleFavorite: (state, action: PayloadAction<Hero>) => {
+   const hero = action.payload;
    const { id } = hero;
 
    if (!!state.favorites[id]) {

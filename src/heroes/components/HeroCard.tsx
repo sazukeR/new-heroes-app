@@ -5,6 +5,8 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { Hero } from "../interfaces/hero-response.interface";
 import { useNavigate } from "react-router";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { toggleFavorite } from "@/store/heroes/heroesSlice";
 
 interface Props {
  hero: Hero;
@@ -12,6 +14,7 @@ interface Props {
 
 export const HeroCard = ({ hero }: Props) => {
  const {
+  id,
   alias,
   status,
   universe,
@@ -34,6 +37,10 @@ export const HeroCard = ({ hero }: Props) => {
  const handleClick = () => {
   navigate(`/heroes/${slug}`);
  };
+
+ const isFavorite = useAppSelector((state) => !!state.heroes.favorites[id]);
+
+ const dispatch = useAppDispatch();
 
  return (
   <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50">
@@ -67,11 +74,14 @@ export const HeroCard = ({ hero }: Props) => {
     )}
     ){/* Favorite button */}
     <Button
+     onClick={() => dispatch(toggleFavorite(hero))}
      size="sm"
      variant="ghost"
      className="absolute bottom-3 right-3 bg-white/90 hover:bg-white"
     >
-     <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+     <Heart
+      className={`h-4 w-4 ${isFavorite ? "fill-red-500 text-red-500" : ""} `}
+     />
     </Button>
     {/* View details button */}
     <Button

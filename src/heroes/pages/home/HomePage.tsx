@@ -10,6 +10,7 @@ import { useMemo } from "react";
 
 import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
 import { usePaginatedHero } from "@/heroes/hooks/usePaginatedHero";
+import { useAppSelector } from "@/store/store";
 
 export const HomePage = () => {
  const [searchParams, setSearchParams] = useSearchParams();
@@ -47,9 +48,13 @@ export const HomePage = () => {
   return validTabs.includes(activeTab) ? activeTab : "all";
  }, [activeTab]);
 
+ const { favoriteCount, favorites } = useAppSelector((state) => state.heroes);
+
  const { data: heroesResponse } = usePaginatedHero(+page, +limit, category);
 
  const { data: summary } = useHeroSummary();
+
+ //console.log("rr", favorites["1"].id);
 
  return (
   <>
@@ -76,7 +81,7 @@ export const HomePage = () => {
        value="favorites"
        className="flex items-center gap-2"
       >
-       Favorites (3)
+       Favorites ({favoriteCount})
       </TabsTrigger>
       <TabsTrigger onClick={() => handleTab("heroes", "hero")} value="heroes">
        Heroes ({summary?.heroCount})
@@ -97,7 +102,7 @@ export const HomePage = () => {
      <TabsContent value="favorites">
       <h1>favorites</h1>
       {/* Character Grid */}
-      <HeroGrid heroes={[]} />
+      <HeroGrid heroes={Object.values(favorites) ?? []} />
      </TabsContent>
      <TabsContent value="heroes">
       <h1>heroes</h1>
@@ -112,7 +117,10 @@ export const HomePage = () => {
     </Tabs>
 
     {/* Pagination */}
-    <CustomPagination totalPages={heroesResponse?.pages ?? 1} />
+
+    {selectedTab !== "favorites" && (
+     <CustomPagination totalPages={heroesResponse?.pages ?? 1} />
+    )}
    </>
   </>
  );
