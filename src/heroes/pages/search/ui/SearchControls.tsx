@@ -16,17 +16,23 @@ export const SearchControls = () => {
 
  const [searchParams, setSearchParams] = useSearchParams();
 
+ const activeAcordion = searchParams.get("active-acordion") ?? "";
+ const selectedStrength = Number(searchParams.get("strength") ?? "0");
+
  const inputRef = useRef<HTMLInputElement>(null);
 
+ const handleParams = (name: string, value: string) => {
+  setSearchParams((prev) => {
+   prev.set(name, value);
+
+   return prev;
+  });
+ };
+
  const handleQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const value = inputRef.current?.value ?? "";
   if (e.key === "Enter") {
-   const value = inputRef.current?.value ?? "";
-
-   setSearchParams((prev) => {
-    prev.set("name", value);
-
-    return prev;
-   });
+   handleParams("name", value);
   }
  };
 
@@ -50,17 +56,27 @@ export const SearchControls = () => {
 
     {/* Action buttons */}
     <div className="flex gap-2">
-     <Button variant="outline" className="h-12 bg-transparent">
+     <Button
+      onClick={() => {
+       if (activeAcordion === "advance-filters") {
+        handleParams("active-acordion", "");
+        return;
+       }
+       handleParams("active-acordion", "advance-filters");
+      }}
+      variant={activeAcordion === "advance-filters" ? "default" : "outline"}
+      className="h-12 "
+     >
       <Filter className="h-4 w-4 mr-2" />
       Filters
      </Button>
 
-     <Button variant="outline" className="h-12 bg-transparent">
+     <Button variant="outline" className="h-12 ">
       <SortAsc className="h-4 w-4 mr-2" />
       Sort by Name
      </Button>
 
-     <Button variant="outline" className="h-12 bg-transparent">
+     <Button variant="outline" className="h-12 ">
       <Grid className="h-4 w-4" />
      </Button>
 
@@ -73,8 +89,8 @@ export const SearchControls = () => {
 
    {/* Advanced Filters */}
 
-   <Accordion type="single" collapsible value="item-1">
-    <AccordionItem value="item-1">
+   <Accordion type="single" collapsible value={activeAcordion}>
+    <AccordionItem value="advance-filters">
      {/* <AccordionTrigger>Is it accessible?</AccordionTrigger> */}
      <AccordionContent>
       <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border">
@@ -109,8 +125,17 @@ export const SearchControls = () => {
         </div>
        </div>
        <div className="mt-4">
-        <label className="text-sm font-medium">Minimum Strength: 0/10</label>
-        <Slider defaultValue={[5]} max={10} step={1} />
+        <label className="text-sm font-medium">
+         Minimum Strength: {selectedStrength}/10
+        </label>
+        <Slider
+         defaultValue={[selectedStrength]}
+         max={10}
+         step={1}
+         onValueChange={(value) =>
+          handleParams("strength", value[0].toString())
+         }
+        />
        </div>
       </div>
      </AccordionContent>

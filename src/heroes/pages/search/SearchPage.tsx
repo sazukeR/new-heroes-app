@@ -10,15 +10,17 @@ import { useSearchParams } from "react-router";
 import { HeroGrid } from "@/heroes/components/HeroGrid";
 
 export const SearchPage = () => {
- const [searchParams, setSearchParams] = useSearchParams();
+ const [searchParams] = useSearchParams();
 
- const queryParams = searchParams.get("name") ?? "";
+ const name = searchParams.get("name") ?? undefined;
+ const strength = searchParams.get("strength") ?? undefined;
 
- const { data: heroesFromSearch } = useQuery({
-  queryKey: ["search", { searchParams }],
+ const { data: heroesFromSearch = [] } = useQuery({
+  queryKey: ["search", { name, strength }],
   queryFn: () =>
    searchHeroesAction({
-    name: queryParams,
+    name: name,
+    strength: strength,
    }),
   staleTime: 1000 * 60 * 5,
  });
